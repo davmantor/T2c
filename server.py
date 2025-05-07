@@ -69,34 +69,53 @@ Use "_thoughts" to sketch out the problem before writing the detailed specificat
 The output should be a JSON object with the following structure:
 
 {
-    "language": "JavaScript",
-    "problems": [
+  "title": "Solving a Python Parsons Problem",
+  "description": "Reorder scrambled code snippets to build a valid Python function that computes the Fibonacci sequence.",
+  "welcomeHeader": "Welcome to a quick Parsons Problem tutorial",
+  "certificateTitle": "🎉 Certificate of Completion 🎉",
+  "assignmentName": "Speedrunning Parsons Problems",
+  "parsonsProblems": [
+    {
+      "id": "parsons1",
+      "prompt": "Arrange the lines to implement a function fib(n) that returns the nth Fibonacci number.",
+      "statements": [
         {
-            "_thoughts": [
-                "I'll require the user to build a function that doesn't get called.",
-                "I'll test their ability to give it a good name.",
-                "And I'll have them pick a good body for it.",
-                "Distractors will include other names and bodies as well as loose body fragments with bad indentation."
-            ],
-            "problem": "Write a function that adds two numbers.",
-            "solution_blocks": [
-                "function add(a, b) {",
-                "    return a + b;",
-                "}"
-            ],
-            "distractor_blocks": [
-                "function subtract(a, b) {",
-                "    return a - b;",
-                "}",
-                "function multiply(a, b) {",
-                "    return a * b;",
-                "}",
-                "a + b",
-                "return a;"
-            ],
-            "difficulty": "Easy",
-            "concepts": ["Variable Assignment", "Basic Arithmetic"]
+          "text": "def fib(n):",
+          "order": 1,
+          "feedbackWrong": "Start by defining the function with def."
         },
+        {
+          "text": "    if n <= 1:",
+          "order": 2,
+          "feedbackWrong": "Handle the base cases for n <= 1."
+        },
+        {
+          "text": "        return n",
+          "order": 3,
+          "feedbackWrong": "Return n when n is 0 or 1."
+        },
+        {
+          "text": "    else:",
+          "order": 4,
+          "feedbackWrong": "Use else to separate the recursive step."
+        },
+        {
+          "text": "        return fib(n - 1) + fib(n - 2)",
+          "order": 5,
+          "feedbackWrong": "Combine the two previous Fibonacci numbers."
+        },
+        {
+          "text": "print(fib(10))",
+          "order": 6,
+          "feedbackWrong": "Call the function and display the result."
+        },
+        {
+          "text": "import math",
+          "distractor": true,
+          "feedback": "This import is not needed for the Fibonacci calculation."
+        }
+      ]
+    },
         ...
     ]
 }
