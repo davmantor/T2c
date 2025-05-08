@@ -34,6 +34,23 @@
         <label for="num_problems">Specify Number of Problems:</label>
         <input type="range" id="num_problems" name="num_problems" min="1" max="10" value="3" oninput="numProblemsOutput.value = this.value; updateUI();">
         <output id="numProblemsOutput">3</output><br><br>
+        
+        <label for="distractorCount">Distractors per problem:</label>
+        <input
+        type="range"
+        id="distractorCount"
+        name="distractorCount"
+        min="0"
+        max="10"
+        value="2"
+        oninput="distractorCountOutput.value = this.value; updateUI();"
+        />
+        <output id="distractorCountOutput">2</output>
+        <br><br>
+
+        <label>Include hints?
+            <input type="checkbox" id="includeHints">
+          </label><br><br>
     </form>
 
     <h2>Problem Specification</h2>
@@ -47,7 +64,7 @@
     <pre id="output"></pre>
 
     <script>
-        const languages = ["JavaScript", "Python", "C#"];
+        const languages = ["Python", "R", "SQL", "C#"];
         const conceptGroups = [
             {
                 difficulty: "Easy",
@@ -131,10 +148,17 @@
             }, {});
             const num_problems = document.getElementById('num_problems').value;
 
+            const distractorCount = parseInt(
+                document.getElementById('distractorCount').value, 10);
+            const includeHints = 
+                document.getElementById('includeHints').checked;
+
             const problemSpec = {
                 language,
                 concepts,
-                num_problems: parseInt(num_problems, 10)
+                "Number of Problems": parseInt(num_problems, 10),
+                "Number of Distractors per Problem": distractorCount,
+                "Include hints in the feedback?":    includeHints
             };
 
             // Update problem specification display
@@ -156,6 +180,10 @@
             checkbox.addEventListener('change', updateUI);
         });
         document.getElementById('num_problems').addEventListener('input', updateUI);
+        document.getElementById('distractorCount')
+            .addEventListener('input',  updateUI);
+        document.getElementById('includeHints')
+            .addEventListener('change', updateUI);
 
         // Initial update
         updateUI();
