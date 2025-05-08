@@ -133,6 +133,34 @@
       cursor:   not-allowed;    /* show the “no‐drop” cursor */
       opacity:  0.7;            /* optional fade */
     }
+
+    #generated-url {
+        display: block;
+        cursor: pointer;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-all;
+        }
+
+        #copy-toast {
+            display: inline-block;
+            margin-left: 8px;
+
+            /* ← button‐ish styling: */
+            padding: 6px 12px;
+            border: 2px solid #dc3545;
+            border-radius: 4px;
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: 600;
+
+            /* ← your existing fade rules: */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;    /* so it doesn’t steal clicks */
+        }
   </style>
 </head>
 <body>
@@ -187,7 +215,8 @@
     <pre id="problem-specification"></pre>
 
     <h2>Generated URL</h2>
-    <a id="generated-url" href="#" target="_blank">Click to test the generated URL</a>
+    <a id="generated-url" href="#">Click to test the generated URL</a>
+    <span id="copy-toast" role="alert" aria-live="assertive">Copied to clipboard!</span>
 
     <h2>Generated Problems</h2>
     <button type="button" id="preview-result">Preview Result</button>
@@ -195,6 +224,9 @@
   </div>
 
   <script>
+    const link = document.getElementById('generated-url');
+    const toast = document.getElementById('copy-toast');
+
     const languages = ["Python", "R", "SQL", "C#"];
     const conceptGroups = [
       { difficulty: "Easy", concepts: { "Variable Assignment": true, "Basic Arithmetic": false, "Printing Output": true, "Simple Loops": false, "Conditional Statements": false } },
@@ -231,7 +263,6 @@
         label.appendChild(cb);
         label.appendChild(document.createTextNode(` ${concept}`));
         div.appendChild(label);
-        div.appendChild(document.createElement('br'));
       });
 
       conceptGroupsContainer.appendChild(div);
@@ -259,6 +290,43 @@
       const a = document.getElementById('generated-url');
       a.href = url;
       a.textContent = url;
+    }
+
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const url = link.href;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+            .then(() => showToast())
+            .catch(() => fallbackCopy(url));
+        } else {
+        fallbackCopy(url);
+        }
+    });
+
+    function fallbackCopy(text) {
+        // hidden textarea trick
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.top = 0;
+        ta.style.left = 0;
+        ta.style.opacity = 0;
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); }
+        catch (err) { console.error('Fallback: Oops, unable to copy', err); }
+        document.body.removeChild(ta);
+        showToast();
+    }
+
+    function showToast() {
+        toast.style.opacity = 1;
+        setTimeout(() => {
+        toast.style.opacity = 0;
+        }, 1200);
     }
 
     // wire up events
