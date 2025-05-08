@@ -283,7 +283,7 @@
       const distractorCount = +document.getElementById('distractorCount').value;
       const includeHints = document.getElementById('includeHints').checked;
 
-      const spec = { language, concepts, "Number of Problems": num_problems, "Number of Distractors per Problem": distractorCount, "Include hints in the feedback?": includeHints };
+      const spec = { language, concepts, "Number of Problems": num_problems, "Number of Distractor Blocks per Problem": distractorCount, "Include hints in the feedback?": includeHints };
       document.getElementById('problem-specification').textContent = JSON.stringify(spec, null, 2);
 
       const url = '/generate-problems?' + new URLSearchParams({ specification: btoa(JSON.stringify(spec)) });
