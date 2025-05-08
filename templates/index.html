@@ -1,42 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parsons Problem Generator</title>
-    <link rel="icon" href="data:,"></link>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .difficulty-group {
-            margin-bottom: 20px;
-        }
-        .difficulty-group h3 {
-            margin-bottom: 10px;
-        }
-        #generated-url {
-            margin-top: 20px;
-            word-wrap: break-word;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Parsons Problem Generator</title>
+  <link rel="icon" href="data:,">
+  <style>
+    /* reset default margins so centering works predictably */
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* center‐and‐gutter container for entire page */
+    .page-container {
+      max-width: 800px;       /* cap page width */
+      margin: 20px auto;      /* 20px top/bottom, auto left/right */
+      padding: 20px;          /* inner gutter */
+      background-color: #f6f8fa;
+      color: #333;
+      font-family: Arial, sans-serif;
+    }
+
+    /* form container */
+    #problem-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 24px;
+    }
+
+    /* make headings span full width */
+    #problem-form > h2 {
+      grid-column: 1 / -1;
+      margin-bottom: 8px;
+    }
+
+    /* labels and controls */
+    #problem-form label {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+    #problem-form label[for],
+    #problem-form label > input {
+      margin-right: 8px;
+    }
+
+    /* range sliders fill their cell */
+    #problem-form input[type="range"] {
+      flex: 1;
+    }
+
+    /* nice select styling */
+    #problem-form select {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      flex: 1;
+    }
+
+    /* concept‐group boxes */
+    .difficulty-group {
+      grid-column: 1 / -1;
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .difficulty-group h3 {
+      margin: 0 0 8px;
+      font-size: 1.1em;
+      color: #0366d6;
+    }
+    .difficulty-group label {
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    /* preview button */
+    #preview-result {
+      padding: 10px 16px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+    #preview-result:hover {
+      background: #218838;
+    }
+
+    /* outputs */
+    #problem-specification,
+    #output {
+      background: #f1f8ff;
+      padding: 12px;
+      border: 1px solid #c8e1ff;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      margin-bottom: 24px;
+    }
+
+    /* generated link */
+    #generated-url {
+      display: inline-block;
+      color: #0366d6;
+      text-decoration: none;
+      margin-bottom: 24px;
+    }
+    #generated-url:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
+  <div class="page-container">
     <h1>Parsons Problem-o-matic</h1>
+
     <form id="problem-form">
+      <h2>
         <label for="language">Select Programming Language:</label>
-        <select id="language" name="language" required></select><br><br>
+      </h2>
+      <select id="language" name="language" required></select><br><br>
 
-        <h2>Select Concepts to Include</h2>
-        <div id="concept-groups"></div>
+      <h2>Select Concepts to Include</h2>
+      <div id="concept-groups"></div>
 
+      <h2>
         <label for="num_problems">Specify Number of Problems:</label>
-        <input type="range" id="num_problems" name="num_problems" min="1" max="10" value="3" oninput="numProblemsOutput.value = this.value; updateUI();">
-        <output id="numProblemsOutput">3</output><br><br>
-        
+      </h2>
+      <input
+        type="range"
+        id="num_problems"
+        name="num_problems"
+        min="1"
+        max="10"
+        value="3"
+        oninput="numProblemsOutput.value = this.value; updateUI();"
+      >
+      <output id="numProblemsOutput">3</output><br><br>
+
+      <h2>
         <label for="distractorCount">Distractors per problem:</label>
-        <input
+      </h2>
+      <input
         type="range"
         id="distractorCount"
         name="distractorCount"
@@ -44,13 +160,14 @@
         max="10"
         value="2"
         oninput="distractorCountOutput.value = this.value; updateUI();"
-        />
-        <output id="distractorCountOutput">2</output>
-        <br><br>
+      >
+      <output id="distractorCountOutput">2</output><br><br>
 
+      <h2>
         <label>Include hints?
-            <input type="checkbox" id="includeHints">
-          </label><br><br>
+          <input type="checkbox" id="includeHints">
+        </label>
+      </h2><br><br>
     </form>
 
     <h2>Problem Specification</h2>
@@ -62,150 +179,93 @@
     <h2>Generated Problems</h2>
     <button type="button" id="preview-result">Preview Result</button>
     <pre id="output"></pre>
+  </div>
 
-    <script>
-        const languages = ["Python", "R", "SQL", "C#"];
-        const conceptGroups = [
-            {
-                difficulty: "Easy",
-                concepts: {
-                    "Variable Assignment": true,
-                    "Basic Arithmetic": false,
-                    "Printing Output": true,
-                    "Simple Loops": false,
-                    "Conditional Statements": false
-                }
-            },
-            {
-                difficulty: "Medium",
-                concepts: {
-                    "Functions": false,
-                    "Lists/Arrays": false,
-                    "String Manipulation": false,
-                    "Nested Loops": false,
-                    "Intermediate Conditionals": false
-                }
-            },
-            {
-                difficulty: "Hard",
-                concepts: {
-                    "Recursion": false,
-                    "Data Structures": false,
-                    "Algorithm Implementation": false,
-                    "Error Handling": false,
-                    "Concurrency/Parallelism": false
-                }
-            }
-        ];
+  <script>
+    const languages = ["Python", "R", "SQL", "C#"];
+    const conceptGroups = [
+      { difficulty: "Easy", concepts: { "Variable Assignment": true, "Basic Arithmetic": false, "Printing Output": true, "Simple Loops": false, "Conditional Statements": false } },
+      { difficulty: "Medium", concepts: { "Functions": false, "Lists/Arrays": false, "String Manipulation": false, "Nested Loops": false, "Intermediate Conditionals": false } },
+      { difficulty: "Hard", concepts: { "Recursion": false, "Data Structures": false, "Algorithm Implementation": false, "Error Handling": false, "Concurrency/Parallelism": false } }
+    ];
 
-        // Populate language dropdown
-        const languageSelect = document.getElementById('language');
-        languages.forEach(language => {
-            const option = document.createElement('option');
-            option.value = language;
-            option.textContent = language;
-            languageSelect.appendChild(option);
+    // Populate language dropdown
+    const languageSelect = document.getElementById('language');
+    languages.forEach(lang => {
+      const opt = document.createElement('option');
+      opt.value = lang;
+      opt.textContent = lang;
+      languageSelect.appendChild(opt);
+    });
+
+    // Populate concept groups
+    const conceptGroupsContainer = document.getElementById('concept-groups');
+    conceptGroups.forEach(group => {
+      const div = document.createElement('div');
+      div.className = 'difficulty-group';
+      const h3 = document.createElement('h3');
+      h3.textContent = group.difficulty;
+      div.appendChild(h3);
+
+      Object.entries(group.concepts).forEach(([concept, def]) => {
+        const label = document.createElement('label');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.name = 'concepts';
+        cb.value = concept;
+        cb.checked = def;
+        cb.addEventListener('change', updateUI);
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(` ${concept}`));
+        div.appendChild(label);
+        div.appendChild(document.createElement('br'));
+      });
+
+      conceptGroupsContainer.appendChild(div);
+    });
+
+    const output = document.getElementById('output');
+
+    function updateUI() {
+      const language = document.getElementById('language').value;
+      const concepts = conceptGroups.reduce((acc, g) => {
+        acc[g.difficulty] = {};
+        Object.keys(g.concepts).forEach(c => {
+          acc[g.difficulty][c] = document.querySelector(`input[name="concepts"][value="${c}"]`).checked;
         });
+        return acc;
+      }, {});
+      const num_problems = +document.getElementById('num_problems').value;
+      const distractorCount = +document.getElementById('distractorCount').value;
+      const includeHints = document.getElementById('includeHints').checked;
 
-        // Populate concept groups
-        const conceptGroupsContainer = document.getElementById('concept-groups');
-        conceptGroups.forEach(group => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'difficulty-group';
+      const spec = { language, concepts, "Number of Problems": num_problems, "Number of Distractors per Problem": distractorCount, "Include hints in the feedback?": includeHints };
+      document.getElementById('problem-specification').textContent = JSON.stringify(spec, null, 2);
 
-            const groupTitle = document.createElement('h3');
-            groupTitle.textContent = group.difficulty;
-            groupDiv.appendChild(groupTitle);
+      const url = '/generate-problems?' + new URLSearchParams({ specification: btoa(JSON.stringify(spec)) });
+      const a = document.getElementById('generated-url');
+      a.href = url;
+      a.textContent = url;
+    }
 
-            Object.entries(group.concepts).forEach(([concept, defaultValue]) => {
-                const label = document.createElement('label');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'concepts';
-                checkbox.value = concept;
-                checkbox.checked = defaultValue;
-                checkbox.addEventListener('change', updateUI);
+    // wire up events
+    languageSelect.addEventListener('change', updateUI);
+    document.querySelectorAll('input[name="concepts"]').forEach(cb => cb.addEventListener('change', updateUI));
+    document.getElementById('num_problems').addEventListener('input', updateUI);
+    document.getElementById('distractorCount').addEventListener('input', updateUI);
+    document.getElementById('includeHints').addEventListener('change', updateUI);
 
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(` ${concept}`));
-                groupDiv.appendChild(label);
-                groupDiv.appendChild(document.createElement('br'));
-            });
+    // initial render
+    updateUI();
 
-            conceptGroupsContainer.appendChild(groupDiv);
-        });
-
-        const output = document.getElementById('output');
-
-        function updateUI() {
-            const language = document.getElementById('language').value;
-            const concepts = conceptGroups.reduce((acc, group) => {
-                acc[group.difficulty] = {};
-                Object.entries(group.concepts).forEach(([concept]) => {
-                    acc[group.difficulty][concept] = document.querySelector(`input[name="concepts"][value="${concept}"]`).checked;
-                });
-                return acc;
-            }, {});
-            const num_problems = document.getElementById('num_problems').value;
-
-            const distractorCount = parseInt(
-                document.getElementById('distractorCount').value, 10);
-            const includeHints = 
-                document.getElementById('includeHints').checked;
-
-            const problemSpec = {
-                language,
-                concepts,
-                "Number of Problems": parseInt(num_problems, 10),
-                "Number of Distractors per Problem": distractorCount,
-                "Include hints in the feedback?":    includeHints
-            };
-
-            // Update problem specification display
-            document.getElementById('problem-specification').textContent = JSON.stringify(problemSpec, null, 2);
-
-            // Update generated URL
-            const queryParams = new URLSearchParams({
-                specification: btoa(JSON.stringify(problemSpec))
-            });
-            const url = `/generate-problems?${queryParams.toString()}`;
-            const generatedUrlAnchor = document.getElementById('generated-url');
-            generatedUrlAnchor.href = url;
-            generatedUrlAnchor.textContent = url;
-        }
-
-        // Update UI on language change
-        languageSelect.addEventListener('change', updateUI);
-        document.querySelectorAll('input[name="concepts"]').forEach(checkbox => {
-            checkbox.addEventListener('change', updateUI);
-        });
-        document.getElementById('num_problems').addEventListener('input', updateUI);
-        document.getElementById('distractorCount')
-            .addEventListener('input',  updateUI);
-        document.getElementById('includeHints')
-            .addEventListener('change', updateUI);
-
-        // Initial update
-        updateUI();
-
-        const previewButton = document.getElementById('preview-result');
-        previewButton.addEventListener('click', () => {
-            previewButton.disabled = true;
-            fetch(document.getElementById('generated-url').href)
-                .then(response => {
-                    previewButton.disabled = false;
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch problems');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    output.textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    output.textContent = `Error: ${error.message}`;
-                });
-        });
-    </script>
+    document.getElementById('preview-result').addEventListener('click', () => {
+      const btn = document.getElementById('preview-result');
+      btn.disabled = true;
+      fetch(document.getElementById('generated-url').href)
+        .then(r => { btn.disabled = false; if(!r.ok) throw new Error('Fetch failed'); return r.json(); })
+        .then(data => output.textContent = JSON.stringify(data, null, 2))
+        .catch(err => output.textContent = `Error: ${err.message}`);
+    });
+  </script>
 </body>
 </html>
